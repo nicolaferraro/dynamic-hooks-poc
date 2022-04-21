@@ -1,6 +1,6 @@
 # Dynamic Hooks POC
 
-A simple POC showing how to externally (e.g. from an operator) control lifecycle hooks on pods without recreating them.
+A simple POC showing how to externally (e.g. from an operator) control lifecycle hooks on pods without restarting or recreating them.
 
 ## Running
 
@@ -16,7 +16,7 @@ Once you see all pods running, you can inject the new probes into the configmap 
 kubectl apply -f failing.yaml
 
 # To force the Kubelet to immediately resync the configmap volume
-kubectl annotate pods -l app=example trigger=failing
+kubectl annotate pods -l app=example trigger=failing --overwrite
 ```
 
 Pod should start to fail and they'll be restarted by Kubernetes.
@@ -27,7 +27,7 @@ You can restore the original probes by running:
 kubectl apply -f working.yaml
 
 # To force the Kubelet to immediately resync the configmap volume
-kubectl annotate pods -l app=example trigger=working
+kubectl annotate pods -l app=example trigger=working --overwrite
 ```
 
 ## Notes
