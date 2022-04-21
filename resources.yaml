@@ -1,0 +1,50 @@
+# Initial configmap with hooks
+
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: example-hooks
+data:
+  liveness.sh: |
+    #!/bin/bash
+
+    exit 0
+
+---
+
+# Example deployment with hooks configured
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: example
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: example
+  template:
+    metadata:
+      labels:
+        app: example
+    spec:
+      volumes:
+      - name: hooks
+        configMap:
+          defaultMode: 0555
+          name: example-hooks
+      containers:
+      - name: nginx
+        image: nginx:1.14.2
+        ports:
+        - containerPort: 80
+        volumeMounts:
+        - name: hooks
+          mountPath: /opt/hooks
+        livenessProbe:
+          exec:
+            command:
+            - /opt/hooks/liveness.sh
+          initialDelaySeconds: 1
+          periodSeconds: 1
+          failureThreshold: 1

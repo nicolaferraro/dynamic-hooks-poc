@@ -1,0 +1,11 @@
+# A working version of the liveness probe that can be dynamically injected
+
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: example-hooks
+data:
+  liveness.sh: |
+    #!/bin/bash
+
+    exit 0
